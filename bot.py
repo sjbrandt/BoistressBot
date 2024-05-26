@@ -32,6 +32,15 @@ async def hello_command(interaction):
     await interaction.response.send_message(f"Hello {interaction.user.mention}!")
 
 
+@tree.command(
+    name="github",
+    description="Gives link to my GitHub repository!",
+    guild=discord.Object(id=GUILD_ID)
+)
+async def github_command(interaction):
+    await interaction.response.send_message("Here ya go!\nhttps://github.com/sofusbrandt/BoistressBot")
+
+
 # Events
 @client.event
 async def on_ready():
