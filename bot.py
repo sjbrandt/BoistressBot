@@ -8,6 +8,7 @@ from discord import app_commands
 
 import users
 import steam_api
+import gener8rs_api
 
 
 # Settings
@@ -68,6 +69,44 @@ async def playtime(interaction, playername: str = None):
 
     player_reference = f"<@{playername}>" if REFER_TO_OTHER_USERS_BY_MENTION else playername
     await interaction.response.send_message(f"Player {player_reference} has played Team Fortress 2 for {hours} hours!")
+
+
+@tree.command(
+    name="loadouts",
+    description="Generate random loadouts for random classes",
+    guild=discord.Object(id=GUILD_ID)
+)
+@app_commands.describe(count="Amount of loadouts to generate. Leave blank for 6 named loadouts.")
+async def random(interaction, count: int = None):
+    persons = ['Sofus', 'Adrian', 'Gustav', 'Philip', 'Thorvald', 'Mathias']
+    message = "## Random loadouts\n"
+    use_names = False
+
+    if count is None:
+        use_names = True
+        count = 6
+
+    for i in range(0, count):
+        loadout = gener8rs_api.random_loadout()  # No idea why I have to name the file here
+
+        _class = loadout['_sChosenClass']
+        primary = loadout['_sPrimary']
+        secondary = loadout['_sSecondary']
+        melee = loadout['_sMelee']
+        building = loadout['_sBuilding']
+
+        if use_names:
+            message += f"__{persons[i]}__: **{_class}**\n"
+        else:
+            message += f"{i + 1}: **{_class}**\n"
+        message += f"{primary}\n"
+        message += f"{secondary}\n"
+        message += f"{melee}\n"
+        if building is not None:
+            message += f"{building}\n"
+        message += "\n"
+
+    await interaction.response.send_message(message)
 
 
 # Events
