@@ -77,7 +77,7 @@ async def playtime(interaction, playername: str = None):
     guild=discord.Object(id=GUILD_ID)
 )
 @app_commands.describe(count="Amount of loadouts to generate. Leave blank for 6 named loadouts.")
-async def random(interaction, count: int = None):
+async def loadouts(interaction, count: int = None):
     persons = ['Sofus', 'Adrian', 'Gustav', 'Philip', 'Thorvald', 'Mathias']
     message = "## Random loadouts\n"
     use_names = False
