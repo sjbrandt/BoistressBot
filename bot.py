@@ -111,6 +111,15 @@ async def loadouts(interaction, count: int = None):
     await interaction.edit_original_response(content=message)
 
 
+@tree.error
+async def on_error(interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
+    creator_id = os.getenv('CREATOR_DISCORD_ID')
+    message = "Whoops, I had an error! Let me call my boss for a second...\n\n"
+    message += f"<@{creator_id}> hey dickface! ur a dumbfuck!\n\n"
+    message += f"```{error}```"
+    await interaction.channel.send(message)
+
+
 # Events
 @client.event
 async def on_ready():
