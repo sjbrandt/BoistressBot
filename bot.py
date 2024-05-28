@@ -78,8 +78,6 @@ async def playtime(interaction, playername: str = None):
 )
 @app_commands.describe(count="Amount of loadouts to generate. Leave blank for 6 named loadouts.")
 async def loadouts(interaction, count: int = None):
-    await interaction.response.send_message(f"Fetching {count} loadouts...")
-
     persons = ['Sofus', 'Adrian', 'Gustav', 'Philip', 'Thorvald', 'Mathias']
     message = "## Random loadouts\n"
     use_names = False
@@ -87,6 +85,9 @@ async def loadouts(interaction, count: int = None):
     if count is None:
         use_names = True
         count = 6
+
+    fmsg = "people's" if use_names else count
+    await interaction.response.send_message(f"Fetching {fmsg} loadouts...")
 
     for i in range(0, count):
         loadout = gener8rs_api.random_loadout()  # No idea why I have to name the file here
