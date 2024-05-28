@@ -78,6 +78,8 @@ async def playtime(interaction, playername: str = None):
 )
 @app_commands.describe(count="Amount of loadouts to generate. Leave blank for 6 named loadouts.")
 async def loadouts(interaction, count: int = None):
+    await interaction.response.send_message(f"Fetching {count} loadouts...")
+
     persons = ['Sofus', 'Adrian', 'Gustav', 'Philip', 'Thorvald', 'Mathias']
     message = "## Random loadouts\n"
     use_names = False
@@ -106,7 +108,7 @@ async def loadouts(interaction, count: int = None):
             message += f"{building}\n"
         message += "\n"
 
-    await interaction.response.send_message(message)
+    await interaction.edit_original_response(content=message)
 
 
 # Events
