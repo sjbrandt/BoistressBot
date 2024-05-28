@@ -111,6 +111,7 @@ async def loadouts(interaction, count: int = None):
     await interaction.edit_original_response(content=message)
 
 
+# Error handling
 @tree.error
 async def on_error(interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
     creator_id = os.getenv('CREATOR_DISCORD_ID')
