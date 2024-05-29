@@ -10,13 +10,15 @@ import users
 import steam_api
 import gener8rs_api
 
-
 # Settings
 REFER_TO_OTHER_USERS_BY_MENTION = False
 
 # Initialize
 load_dotenv()
-GUILD_ID = os.getenv('GUILD_ID')
+GUILD_ID = int(os.getenv('GUILD_ID'))
+CREATOR_DISCORD_ID = int(os.getenv('CREATOR_DISCORD_ID'))
+GENERAL_CHANNEL_ID = int(os.getenv('GENERAL_CHANNEL_ID'))
+BOT_COMMANDS_CHANNEL_ID = int(os.getenv('BOT_COMMANDS_CHANNEL_ID'))
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -115,9 +117,8 @@ async def loadouts(interaction, count: int = None):
 # Error handling
 @tree.error
 async def on_error(interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
-    creator_id = os.getenv('CREATOR_DISCORD_ID')
     message = "Whoops, I had an error! Let me call my boss for a second...\n\n"
-    message += f"<@{creator_id}> hey dickface! ur a dumbfuck!\n\n"
+    message += f"<@{CREATOR_DISCORD_ID}> hey dickface! ur a dumbfuck!\n\n"
     message += f"```{error}```"
     await interaction.channel.send(message)
 
