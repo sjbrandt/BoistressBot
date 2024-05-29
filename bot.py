@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 import discord
 from discord import app_commands
+from discord.ext import tasks
 
 import users
 import steam_api
@@ -113,6 +114,21 @@ async def loadouts(interaction, count: int = None):
     await interaction.edit_original_response(content=message)
 
 
+@tasks.loop(minutes=10)
+async def update_player_playtimes():
+    channel = await client.fetch_channel(GENERAL_CHANNEL_ID)
+    for user in users.load_users():
+        steam_id = user['steam_id']
+        registered_playtime = users.get_registered_playtime(steam_id)
+        actual_playtime = steam_api.get_playtime(steam_id)
+        users.update_registered_playtime(steam_id, int(actual_playtime))
+
+        if actual_playtime // 100 > registered_playtime // 100:
+            reference = f"<@{user['discord_id']}>"
+            broken_barrier = int((actual_playtime // 100) * 100)
+            await channel.send(f"## {reference} just reached {broken_barrier} hours!")
+
+
 # Error handling
 @tree.error
 async def on_error(interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
@@ -127,6 +143,7 @@ async def on_error(interaction: discord.Interaction, error: discord.app_commands
 async def on_ready():
     await tree.sync(guild=discord.Object(id=GUILD_ID))
     print(f"{client.user} has connected to Discord!")
+    update_player_playtimes.start()
 
 
 # Run
