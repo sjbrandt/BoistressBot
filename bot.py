@@ -18,7 +18,6 @@ load_dotenv()
 GUILD_ID = int(os.getenv('GUILD_ID'))
 CREATOR_DISCORD_ID = int(os.getenv('CREATOR_DISCORD_ID'))
 GENERAL_CHANNEL_ID = int(os.getenv('GENERAL_CHANNEL_ID'))
-BOT_COMMANDS_CHANNEL_ID = int(os.getenv('BOT_COMMANDS_CHANNEL_ID'))
 
 intents = discord.Intents.default()
 intents.message_content = True
