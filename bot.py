@@ -5,18 +5,20 @@ from dotenv import load_dotenv
 
 import discord
 from discord import app_commands
+from discord.ext import tasks
 
 import users
 import steam_api
 import gener8rs_api
-
 
 # Settings
 REFER_TO_OTHER_USERS_BY_MENTION = False
 
 # Initialize
 load_dotenv()
-GUILD_ID = os.getenv('GUILD_ID')
+GUILD_ID = int(os.getenv('GUILD_ID'))
+CREATOR_DISCORD_ID = int(os.getenv('CREATOR_DISCORD_ID'))
+GENERAL_CHANNEL_ID = int(os.getenv('GENERAL_CHANNEL_ID'))
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -112,12 +114,26 @@ async def loadouts(interaction, count: int = None):
     await interaction.edit_original_response(content=message)
 
 
+@tasks.loop(minutes=10)
+async def update_player_playtimes():
+    channel = await client.fetch_channel(GENERAL_CHANNEL_ID)
+    for user in users.load_users():
+        steam_id = user['steam_id']
+        registered_playtime = users.get_registered_playtime(steam_id)
+        actual_playtime = steam_api.get_playtime(steam_id)
+        users.update_registered_playtime(steam_id, int(actual_playtime))
+
+        if actual_playtime // 100 > registered_playtime // 100:
+            reference = f"<@{user['discord_id']}>"
+            broken_barrier = int((actual_playtime // 100) * 100)
+            await channel.send(f"## {reference} just reached {broken_barrier} hours!")
+
+
 # Error handling
 @tree.error
 async def on_error(interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
-    creator_id = os.getenv('CREATOR_DISCORD_ID')
     message = "Whoops, I had an error! Let me call my boss for a second...\n\n"
-    message += f"<@{creator_id}> hey dickface! ur a dumbfuck!\n\n"
+    message += f"<@{CREATOR_DISCORD_ID}> hey dickface! ur a dumbfuck!\n\n"
     message += f"```{error}```"
     await interaction.channel.send(message)
 
@@ -127,6 +143,7 @@ async def on_error(interaction: discord.Interaction, error: discord.app_commands
 async def on_ready():
     await tree.sync(guild=discord.Object(id=GUILD_ID))
     print(f"{client.user} has connected to Discord!")
+    update_player_playtimes.start()
 
     while True:
         i = await client.loop.run_in_executor(None, input, "$ ")
