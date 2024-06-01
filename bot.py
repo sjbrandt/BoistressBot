@@ -40,7 +40,7 @@ async def hello_command(interaction):
 
 @tree.command(
     name="github",
-    description="Give link to my GitHub repository!",
+    description="Get link to my GitHub repository!",
     guild=discord.Object(id=GUILD_ID)
 )
 async def github_command(interaction):
@@ -49,7 +49,7 @@ async def github_command(interaction):
 
 @tree.command(
     name="playtime",
-    description="Give the playtime for yourself or the given player",
+    description="Get the playtime for yourself or the given player",
     guild=discord.Object(id=GUILD_ID)
 )
 @app_commands.describe(playername="Discord username or @mention of the player. Leave blank to use yourself.")
