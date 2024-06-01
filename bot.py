@@ -124,6 +124,37 @@ async def stathelp(interaction):
     await interaction.response.send_message(f"[List of available stats for /stat]({link})")
 
 
+@tree.command(
+    name="stat",
+    description="Get a given stat for a given player",
+    guild=discord.Object(id=GUILD_ID)
+)
+@app_commands.describe(
+    stat="Stat name according to Steam API (see list with /stathelp)",
+    playername="Discord username or @mention of the player, or blank to use yourself"
+)
+async def stat(interaction, stat: str, playername: str = None):
+    if playername is None:
+        playername = interaction.user.name
+
+    if re.compile("<@[0-9]+>").match(playername):  # mention is used instead of username
+        member = await interaction.guild.fetch_member(playername[2:-1])
+        playername = member.name
+
+    steam_id = users.steam_id_from_discord_username(playername)
+
+    if steam_id is None:
+        await interaction.response.send_message(f"User {playername} not found")
+        return
+
+    stat_result = steam_api.get_stat(steam_id, stat)
+
+    if stat_result is None:
+        await interaction.response.send_message(f"Stat {stat} for {playername} not found")
+
+    await interaction.response.send_message(f"{playername} - {stat} = {stat_result}")
+
+
 @tasks.loop(minutes=10)
 async def update_player_playtimes():
     channel = await client.fetch_channel(GENERAL_CHANNEL_ID)
