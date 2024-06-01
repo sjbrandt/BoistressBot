@@ -152,7 +152,7 @@ async def stat(interaction, stat: str, playername: str = None):
     if stat_result is None:
         await interaction.response.send_message(f"Stat {stat} for {playername} not found")
 
-    await interaction.response.send_message(f"{playername} - {stat} = {stat_result}")
+    await interaction.response.send_message(f"{playername} - `{stat}` = {stat_result}")
 
 
 @tasks.loop(minutes=10)
