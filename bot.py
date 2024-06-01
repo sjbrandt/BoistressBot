@@ -52,7 +52,7 @@ async def github_command(interaction):
     description="Get the playtime for yourself or the given player",
     guild=discord.Object(id=GUILD_ID)
 )
-@app_commands.describe(playername="Discord username or @mention of the player. Leave blank to use yourself.")
+@app_commands.describe(playername="Discord username or @mention of the player, or blank to use yourself")
 async def playtime(interaction, playername: str = None):
     if playername is None:
         playername = interaction.user.name
