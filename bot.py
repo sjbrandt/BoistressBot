@@ -114,6 +114,16 @@ async def loadouts(interaction, count: int = None):
     await interaction.edit_original_response(content=message)
 
 
+@tree.command(
+    name="stathelp",
+    description="Get list of available stats to fetch using the /stats command",
+    guild=discord.Object(id=GUILD_ID)
+)
+async def stathelp(interaction):
+    link = "https://github.com/sofusbrandt/BoistressBot/blob/dev/stats_list.txt"
+    await interaction.response.send_message(f"[List of available stats for /stat]({link})")
+
+
 @tasks.loop(minutes=10)
 async def update_player_playtimes():
     channel = await client.fetch_channel(GENERAL_CHANNEL_ID)
