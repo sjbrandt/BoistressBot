@@ -40,7 +40,7 @@ async def hello_command(interaction):
 
 @tree.command(
     name="github",
-    description="Give link to my GitHub repository!",
+    description="Get link to my GitHub repository!",
     guild=discord.Object(id=GUILD_ID)
 )
 async def github_command(interaction):
@@ -49,10 +49,10 @@ async def github_command(interaction):
 
 @tree.command(
     name="playtime",
-    description="Give the playtime for yourself or the given player",
+    description="Get the playtime for yourself or the given player",
     guild=discord.Object(id=GUILD_ID)
 )
-@app_commands.describe(playername="Discord username or @mention of the player. Leave blank to use yourself.")
+@app_commands.describe(playername="Discord username or @mention of the player, or blank to use yourself")
 async def playtime(interaction, playername: str = None):
     if playername is None:
         playername = interaction.user.name
@@ -112,6 +112,47 @@ async def loadouts(interaction, count: int = None):
         message += "\n"
 
     await interaction.edit_original_response(content=message)
+
+
+@tree.command(
+    name="stathelp",
+    description="Get list of available stats to fetch using the /stats command",
+    guild=discord.Object(id=GUILD_ID)
+)
+async def stathelp(interaction):
+    link = "https://github.com/sofusbrandt/BoistressBot/blob/dev/stats_list.txt"
+    await interaction.response.send_message(f"[List of available stats for /stat]({link})")
+
+
+@tree.command(
+    name="stat",
+    description="Get a given stat for a given player",
+    guild=discord.Object(id=GUILD_ID)
+)
+@app_commands.describe(
+    stat="Stat name according to Steam API (see list with /stathelp)",
+    playername="Discord username or @mention of the player, or blank to use yourself"
+)
+async def stat(interaction, stat: str, playername: str = None):
+    if playername is None:
+        playername = interaction.user.name
+
+    if re.compile("<@[0-9]+>").match(playername):  # mention is used instead of username
+        member = await interaction.guild.fetch_member(playername[2:-1])
+        playername = member.name
+
+    steam_id = users.steam_id_from_discord_username(playername)
+
+    if steam_id is None:
+        await interaction.response.send_message(f"User {playername} not found")
+        return
+
+    stat_result = steam_api.get_stat(steam_id, stat)
+
+    if stat_result is None:
+        await interaction.response.send_message(f"Stat {stat} for {playername} not found")
+
+    await interaction.response.send_message(f"{playername} - `{stat}` = {stat_result}")
 
 
 @tasks.loop(minutes=10)
