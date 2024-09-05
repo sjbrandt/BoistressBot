@@ -53,3 +53,11 @@ def update_registered_playtime(id_or_username: int | str, hours: int):
         if id_match(id_or_username, user):
             user['registered_hours'] = hours
     save_users(users)
+
+
+def update_missing_achievements(id_or_username: int | str, missing_achievements: list[str]):
+    users = load_users()
+    for user in users:
+        if (id_match(id_or_username, user)):
+            user['missing_achievements'] = missing_achievements
+    save_users(users)

@@ -13,6 +13,7 @@ import gener8rs_api
 
 # Settings
 REFER_TO_OTHER_USERS_BY_MENTION = False
+ANNOUNCE_ACHIEVEMENTS = False
 
 # Initialize
 load_dotenv()
@@ -169,6 +170,28 @@ async def update_player_playtimes():
             broken_barrier = int((actual_playtime // 100) * 100)
             await channel.send(f"## {reference} just reached {broken_barrier} hours!")
 
+@tasks.loop(minutes=10)
+async def update_missing_achievements():
+    channel = await client.fetch_channel(GENERAL_CHANNEL_ID)
+    updated = steam_api.get_missing_achievements()
+
+
+
+    _users = users.load_users()
+    for user in _users:
+        if not ANNOUNCE_ACHIEVEMENTS:
+            break
+
+        for achievement in user['missing_achievements']:
+            if achievement not in updated:
+                channel.send()
+
+    for user in _users:
+        user['missing_achievements'] = updated
+
+    users.save_users(_users)
+
+
 
 # Error handling
 @tree.error
@@ -179,12 +202,18 @@ async def on_error(interaction: discord.Interaction, error: discord.app_commands
     await interaction.channel.send(message)
 
 
+def reset_missing_achievements():
+    pass
+
+
 # Events
 @client.event
 async def on_ready():
     await tree.sync(guild=discord.Object(id=GUILD_ID))
     print(f"{client.user} has connected to Discord!")
     update_player_playtimes.start()
+    reset_missing_achievements()
+    update_missing_achievements.start()
 
 
 # Run
