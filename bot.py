@@ -186,6 +186,10 @@ async def on_ready():
     print(f"{client.user} has connected to Discord!")
     update_player_playtimes.start()
 
+    while True:
+        i = await client.loop.run_in_executor(None, input, "$ ")
+        if i == "stop":
+            await client.close()
 
 # Run
 # Taken from line 28-42 of https://replit.com/@replit/Python-Discord-Bot#main.py
