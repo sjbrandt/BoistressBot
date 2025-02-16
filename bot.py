@@ -10,6 +10,7 @@ from discord.ext import tasks
 import users
 import steam_api
 import gener8rs_api
+import teamwork_tf_api
 
 # Settings
 REFER_TO_OTHER_USERS_BY_MENTION = False
@@ -153,6 +154,20 @@ async def stat(interaction, stat: str, playername: str = None):
         await interaction.response.send_message(f"Stat {stat} for {playername} not found")
 
     await interaction.response.send_message(f"{playername} - `{stat}` = {stat_result}")
+
+
+@tree.command(
+    name="comp-activity",
+    description="Get amount of active games and players in valve competitive",
+    guild=discord.Object(id=GUILD_ID)
+)
+async def compactivity(interaction, count: int = None):
+    data = teamwork_tf_api.get_comp_activity()
+    players = data['players']
+    servers = data['servers_non_empty']
+    date = data['created_at']
+
+    await interaction.response.send_message(f"Valve competitive matchmaking currently has **{players} players** in **{servers} servers**\n_as of {date}_")
 
 
 @tasks.loop(minutes=10)
