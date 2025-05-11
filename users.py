@@ -18,14 +18,14 @@ def steam_id_from_discord_id(discord_id: str):
 
 
 def load_users():
-    f = open('users.json')
+    f = open('data/users.json')
     users = json.load(f)
     return users
 
 
 def save_users(users: dict[str, any]):
     json_object = json.dumps(users, indent=2)
-    with open('users.json', 'w') as file:
+    with open('data/users.json', 'w') as file:
         file.write(json_object)
 
 
