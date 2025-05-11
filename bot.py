@@ -1,8 +1,6 @@
 import re
 import os
 
-from dotenv import load_dotenv
-
 import discord
 from discord import app_commands
 from discord.ext import tasks
@@ -16,7 +14,6 @@ import teamwork_tf_api
 REFER_TO_OTHER_USERS_BY_MENTION = False
 
 # Initialize
-load_dotenv()
 GUILD_ID = int(os.getenv('GUILD_ID'))
 CREATOR_DISCORD_ID = int(os.getenv('CREATOR_DISCORD_ID'))
 GENERAL_CHANNEL_ID = int(os.getenv('GENERAL_CHANNEL_ID'))

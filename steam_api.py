@@ -1,9 +1,6 @@
 import os
 import requests
 
-from dotenv import load_dotenv
-
-load_dotenv()
 KEY = os.getenv('STEAM_API_KEY')
 
 
