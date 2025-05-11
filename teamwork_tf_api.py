@@ -1,9 +1,6 @@
 import os
 import requests
 
-from dotenv import load_dotenv
-
-load_dotenv()
 KEY = os.getenv('TEAMWORK_TF_API_KEY')
 
 def get_comp_activity():
