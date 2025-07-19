@@ -2,4 +2,4 @@ data/
 __pycache__/
 .idea/
 .venv/
-.env
+*.env
